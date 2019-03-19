@@ -80,7 +80,46 @@ class SystemDatabase:
     @classmethod
     def game_page_exists(cls, page: str):
         from os import chdir
-        chdir("../Games")
+        chdir("../Games/Pages")
+        try:
+            n = open(page)
+            del n
+        except FileNotFoundError:
+            chdir("..")
+            chdir("../database")
+            return False
+        chdir("..")
+        chdir("../database")
+        return True
+
+    @classmethod
+    def game_media_exists(cls, media):
+        if media is str and "/" in media:
+            n = "/".split(media)
+        elif media is list or tuple or iter:
+            n = media
+        else:
+            raise TypeError
+        from os import chdir
+        chdir("../Games/Media")
+        for i in n:
+            try:
+                s = open(i)
+                del s
+            except FileNotFoundError:
+                chdir("..")
+                chdir("../database")
+                return False
+        chdir("..")
+        chdir("../database")
+        return True
+
+    @classmethod
+    def game_id_exists(cls, id: int):
+        cls.cursor.execute("SELECT * FROM Games WHERE ID = ?;", [id])
+        return len(cls.cursor.fetchall()) > 0
+
+
 
 class AnimatronicsData(SystemDatabase):
 
@@ -168,6 +207,14 @@ class Games(SystemDatabase):
         args = "This game's already in the database"
         pass
 
+    class GamePageNotExists(Exception):
+        args = "This html page does not exist"
+        pass
+
+    class GameMediaNotExists(Exception):
+        args = "This media does not exists"
+        pass
+
     def __add__(self, other: list):
         """
 
@@ -176,6 +223,39 @@ class Games(SystemDatabase):
         """
         if self.game_exists(other[0]):
             return [self.GameExists.args, self.GameExists]
+        if not self.game_page_exists(other[1]):
+            return [self.GamePageNotExists.args, self.GamePageNotExists]
+        if not self.game_media_exists(other[2]):
+            return [self.GameMediaNotExists.args, self.GameMediaNotExists]
+        try:
+            self.cursor.execute("INSERT INTO Games (Name, Page, Media) VALUES (?,?,?);", other)
+        except Exception as error:
+            return [error.args, error]
+        self.con.commit()
+        return ["Done"]
+
+    def __delete_info__(self, id: int):
+        if not self.game_id_exists(id):
+            return [self.GameNotFound.args, self.GameNotFound]
+        else:
+            try:
+                self.cursor.execute("DELETE FROM Games WHERE ID = ?;", [id])
+            except Exception as error:
+                return [error.args, error]
+            self.con.commit()
+            return ["Done!"]
+
+    def __alt_data__(self, camp, new_value, id: int):
+        if not self.game_id_exists(id):
+            return [self.GameNotFound.args, self.GameNotFound]
+        try:
+            self.cursor.execute("UPDATE FROM Games SET {} = {} WHERE ID = {};".format(camp, new_value, id))
+        except Exception as error:
+            return [error.args, error]
+        return ["Done!"]
+
+
+
 
 
 
