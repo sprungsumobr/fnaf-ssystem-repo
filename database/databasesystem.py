@@ -69,6 +69,18 @@ class SystemDatabase:
         else:
             return True
 
+    @classmethod
+    def game_exists(cls, name: str):
+        cls.cursor.execute("SELECT ID FROM Games WHERE Game = ?;", [name])
+        if len(cls.cursor.fetchall()) <= 0:
+            return False
+        else:
+            return True
+
+    @classmethod
+    def game_page_exists(cls, page: str):
+        from os import chdir
+        chdir("../Games")
 
 class AnimatronicsData(SystemDatabase):
 
@@ -144,6 +156,26 @@ class GetAnimatronicInfo(AnimatronicsData):
             val = "SELECT * FROM Animatronics"
         self.cursor.execute(val.format(camp, param, pre_value))
         return self.cursor.fetchall()
+
+
+class Games(SystemDatabase):
+
+    class GameNotFound(Exception):
+        args = "This game does not exists in the database"
+        pass
+
+    class GameExists(Exception):
+        args = "This game's already in the database"
+        pass
+
+    def __add__(self, other: list):
+        """
+
+        :param other: [Name, Page, Media]
+        :return:
+        """
+        if self.game_exists(other[0]):
+            return [self.GameExists.args, self.GameExists]
 
 
 
