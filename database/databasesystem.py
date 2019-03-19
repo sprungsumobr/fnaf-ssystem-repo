@@ -101,6 +101,14 @@ class AnimatronicsData(SystemDatabase):
         elif not self.animatronic_exists(info_list[0]):
             return ["This animatronic already exists!", self.AnimatronicExists]
         else:
+            if info_list[4] is list or iter or tuple:
+                n = info_list[4]
+                info_list[4] = "/".join(n)
+                del n
+            if info_list[1] is list or tuple or iter:
+                n = info_list[1]
+                info_list[1] = "/".join(n)
+                del n
             self.cursor.execute("INSERT INTO Animatronics (Name, Games, Page, Gender, Media) VALUES(?,?,?,?,?);",
                                 info_list)
             self.con.commit()
@@ -120,6 +128,11 @@ class AnimatronicsData(SystemDatabase):
             self.cursor.execute("UPDATE FROM Animatronics SET {} = {} WHERE ID = {};".format(camp, new_value, id))
             self.con.commit()
 
+    @classmethod
+    def get_animatronic_reference(cls, camp: str, value, nedd):
+        cls.cursor.execute("SELECT {} FROM Animatronics WHERE {} = {};".format(nedd, camp, value))
+        return cls.cursor.fetchall()
+
 
 class GetAnimatronicInfo(AnimatronicsData):
 
@@ -131,6 +144,11 @@ class GetAnimatronicInfo(AnimatronicsData):
             val = "SELECT * FROM Animatronics"
         self.cursor.execute(val.format(camp, param, pre_value))
         return self.cursor.fetchall()
+
+
+
+
+
 
 
 
