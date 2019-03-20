@@ -50,11 +50,34 @@ class SystemDatabase:
         else:
             return True
 
+    @classmethod
+    def page_animatronic_exists(cls, page: str):
+        from os import chdir
+        chdir("../Animatronics/Pages")
+        try:
+            n = open(page)
+            del n
+        except FileNotFoundError:
+            return False
+        return True
+
+    @classmethod
+    def id_exists(cls, id: int, table: str):
+        cls.cursor.execute("SELECT * FROM {} WHERE ID = {};".format(table, str(id)))
+        if len(cls.cursor.fetchall()) <= 0:
+            return False
+        else:
+            return True
+
 
 class AnimatronicsData(SystemDatabase):
 
     class AnimatronicExists(Exception):
         args = "This animatronic already exists"
+        pass
+
+    class AnimatronicNotExists(Exception):
+        args = "This animatronic not exists"
         pass
 
     def addinfos(self, info_list):
@@ -67,7 +90,7 @@ class AnimatronicsData(SystemDatabase):
             n = info_list[3]
             info_list[3] = int(n)
             del n
-        elif not self.page_exists(info_list[2]):
+        elif not self.page_exists(info_list[2]) or not self.page_animatronic_exists(info_list[2]):
             return ["This page '"+info_list[2]+"' not exists", FileNotFoundError]
         elif info_list[4] is list or tuple or iter:
             if not self.media_exists(info_list):
@@ -77,6 +100,39 @@ class AnimatronicsData(SystemDatabase):
                 return ["Those medias does not exists!", FileNotFoundError]
         elif not self.animatronic_exists(info_list[0]):
             return ["This animatronic already exists!", self.AnimatronicExists]
+        else:
+            self.cursor.execute("INSERT INTO Animatronics (Name, Games, Page, Gender, Media) VALUES(?,?,?,?,?);",
+                                info_list)
+            self.con.commit()
+            return ["Done"]
+
+    def __delete_info__(self, id: int):
+        if not self.id_exists(id, "Animatronics"):
+            return [self.AnimatronicNotExists.args, self.AnimatronicNotExists]
+        else:
+            self.cursor.execute("DELETE FROM Animatronics WHERE ID = ?;", [id])
+            self.con.commit()
+
+    def __alt_info__(self, id: int, camp, new_value):
+        if not self.id_exists(id, "Animatronics"):
+            return [self.AnimatronicNotExists.args, self.AnimatronicNotExists]
+        else:
+            self.cursor.execute("UPDATE FROM Animatronics SET {} = {} WHERE ID = {};".format(camp, new_value, id))
+            self.con.commit()
+
+
+class GetAnimatronicInfo(AnimatronicsData):
+
+    def _search_at_all(self, camp, pre_value, param):
+        val = "SELECT {} FROM Animatronics WHERE {} = {};"
+        if pre_value is None and param is None:
+            val = "SELECT {} FROM Animatronics;"
+        if camp == "*":
+            val = "SELECT * FROM Animatronics"
+        self.cursor.execute(val.format(camp, param, pre_value))
+        return self.cursor.fetchall()
+
+
 
 
 
