@@ -119,6 +119,54 @@ class SystemDatabase:
         cls.cursor.execute("SELECT * FROM Games WHERE ID = ?;", [id])
         return len(cls.cursor.fetchall()) > 0
 
+    @classmethod
+    def other_id_exists(cls, id: int):
+        cls.cursor.execute("SELECT ID FROM Others WHERE ID = ?;", [id])
+        if len(cls.cursor.fetchone()) <= 0:
+            return False
+        return True
+
+    @classmethod
+    def other_page_exists(cls, page: str):
+        from os import chdir
+        chdir("../../others/pages")
+        try:
+            n = open(page, "r")
+            del n
+        except FileNotFoundError:
+            chdir("../../database")
+            return False
+        chdir("../../database")
+        return True
+
+    @classmethod
+    def other_media_exists(cls, media):
+        from os import chdir
+        chdir("../../others/media")
+        if media is any([list, tuple, iter]):
+            for i in media:
+                try:
+                    n = open(i)
+                    del n
+                except FileNotFoundError:
+                    chdir("../../database")
+                    return False
+        else:
+            try:
+                n = open(media, "r")
+                del n
+            except FileNotFoundError:
+                return False
+        return True
+
+    @classmethod
+    def other_exists(cls, name: str):
+        cls.cursor.execute("SELECT Name FROM Others WHERE Name = ?;", [name])
+        if len(cls.cursor.fetchall()[0]) <= 0:
+            return False
+        else:
+            return True
+
 
 class AnimatronicsData(SystemDatabase):
 
@@ -187,12 +235,26 @@ class AnimatronicsData(SystemDatabase):
 class GetAnimatronicInfo(AnimatronicsData):
 
     def _search_at_all(self, camp, pre_value, param):
-        val = "SELECT {} FROM Animatronics WHERE {} = {};"
-        if pre_value is None and param is None:
-            val = "SELECT {} FROM Animatronics;"
-        if camp == "*":
-            val = "SELECT * FROM Animatronics"
-        self.cursor.execute(val.format(camp, param, pre_value))
+        value = "SELECT {} FROM Animatronics WHERE {} = {};"
+        if pre_value or param is None:
+            value = "SELECT {} FROM Games;"
+            if camp == "*" or camp is None:
+                value = "SELECT * FROM Animatronics;"
+                self.cursor.execute(value)
+                return self.cursor.fetchall()
+            else:
+                self.cursor.execute(value.format(camp))
+                return self.cursor.fetchall()
+        if camp == "*" or camp is None:
+            value = "SELECT * FROM Animatronics WHERE {} = {}"
+            if pre_value is None or param is None:
+                value = "SELECT * FROM Animatronics;"
+                self.cursor.execute(value)
+                return self.cursor.fetchall()
+            else:
+                self.cursor.execute(value.format(param, pre_value))
+                return self.cursor.fetchall()
+        self.cursor.execute(value.format(camp, param, pre_value))
         return self.cursor.fetchall()
 
 
@@ -252,6 +314,64 @@ class Games(SystemDatabase):
         except Exception as error:
             return [error.args, error]
         return ["Done!"]
+
+
+class GetGamesInfo(Games):
+
+    class SyntaxSystemError(Exception):
+        args = "This way to type the camp param is wrong"
+        pass
+
+    def __search_all__(self, camp, pre_value, param):
+        value = "SELECT {} FROM Games WHERE {} = {};"
+        if pre_value or param is None :
+            value = "SELECT {} FROM Games;"
+            if camp == "*" or camp is None:
+                value = "SELECT * FROM Games;"
+                self.cursor.execute(value)
+                return self.cursor.fetchall()
+            else:
+                self.cursor.execute(value.format(camp))
+                return self.cursor.fetchall()
+        if camp == "*" or camp is None:
+            value = "SELECT * FROM Games WHERE {} = {}"
+            if pre_value is None or param is None:
+                value = "SELECT * FROM Games;"
+                self.cursor.execute(value)
+                return self.cursor.fetchall()
+            else:
+                self.cursor.execute(value.format(param, pre_value))
+                return self.cursor.fetchall()
+        self.cursor.execute(value.format(camp, param, pre_value))
+        return self.cursor.fetchall()
+
+
+class Others(SystemDatabase):
+
+    class OtherExists(Exception):
+        args = "This value always exists"
+
+    class OtherNotFound(Exception):
+        args = "This reference does not exists"
+
+
+
+
+    def __add_info__(self, data: list):
+        """
+
+        :param data: [Name, GamesAppear,
+        :return:
+        """
+        if not self.other_exists(data[0]):
+            return [self.OtherNotFound.args, self.OtherNotFound]
+
+
+
+
+
+
+
 
 
 
