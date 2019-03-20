@@ -167,6 +167,17 @@ class SystemDatabase:
         else:
             return True
 
+    
+    @classmethod
+    def game_reference_exists(cls, reference):
+        cls.cursor.execute("SELECT Name FROM Games WHERE ID = ?;", [reference])
+        return len(cls.cursor.fetchall()[0])
+    
+    class GameRefernceNotExists(Exception):
+        args = "This game reference does not exists!"
+    
+
+
 
 class AnimatronicsData(SystemDatabase):
 
@@ -355,16 +366,18 @@ class Others(SystemDatabase):
         args = "This reference does not exists"
 
 
-
-
     def __add_info__(self, data: list):
         """
 
         :param data: [Name, GamesAppear,
         :return:
         """
-        if not self.other_exists(data[0]):
-            return [self.OtherNotFound.args, self.OtherNotFound]
+        if self.other_exists(data[0]):
+            return [self.OtherExists.args, self.OtherExists]
+        if not self.game_reference_exists(data[2]):
+            return [self.GameRefernceNotExists.args, self.GameRefernceNotExists]
+        # todo: Terminar o sistema, para others
+        pass
 
 
 
