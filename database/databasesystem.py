@@ -120,7 +120,6 @@ class SystemDatabase:
         return len(cls.cursor.fetchall()) > 0
 
 
-
 class AnimatronicsData(SystemDatabase):
 
     class AnimatronicExists(Exception):
