@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c419dca6-09b8-4223-a0f5-07c78a815373" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/database/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/databasesystem.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/databasesystem.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,13 +16,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database/databasesystem.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1185">
-              <caret line="237" column="29" lean-forward="true" selection-start-line="237" selection-start-column="29" selection-end-line="237" selection-end-column="29" />
+            <state relative-caret-position="1725">
+              <caret line="368" column="18" selection-start-line="368" selection-start-column="18" selection-end-line="368" selection-end-column="18" />
               <folding>
                 <element signature="e#39#53#0" expanded="true" />
-                <element signature="e#1801#4371#0" />
-                <element signature="e#7236#7447#0" expanded="true" />
-                <element signature="e#7511#7818#0" expanded="true" />
+                <element signature="e#11498#11785#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -76,6 +74,11 @@
             <path>
               <item name="fnaf-ssystem-repo" type="b2602c69:ProjectViewProjectNode" />
               <item name="fnaf-ssystem-repo" type="462c0819:PsiDirectoryNode" />
+              <item name="admin_dir" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fnaf-ssystem-repo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fnaf-ssystem-repo" type="462c0819:PsiDirectoryNode" />
               <item name="Animatronics" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -87,6 +90,11 @@
               <item name="fnaf-ssystem-repo" type="b2602c69:ProjectViewProjectNode" />
               <item name="fnaf-ssystem-repo" type="462c0819:PsiDirectoryNode" />
               <item name="games" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fnaf-ssystem-repo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fnaf-ssystem-repo" type="462c0819:PsiDirectoryNode" />
+              <item name="others" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -125,9 +133,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24866596" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24828677" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -138,7 +145,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32914573" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32847533" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.32847533" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.32914573" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -160,13 +167,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/database/databasesystem.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1185">
-          <caret line="237" column="29" lean-forward="true" selection-start-line="237" selection-start-column="29" selection-end-line="237" selection-end-column="29" />
+        <state relative-caret-position="1725">
+          <caret line="368" column="18" selection-start-line="368" selection-start-column="18" selection-end-line="368" selection-end-column="18" />
           <folding>
             <element signature="e#39#53#0" expanded="true" />
-            <element signature="e#1801#4371#0" />
-            <element signature="e#7236#7447#0" expanded="true" />
-            <element signature="e#7511#7818#0" expanded="true" />
+            <element signature="e#11498#11785#0" expanded="true" />
           </folding>
         </state>
       </provider>
