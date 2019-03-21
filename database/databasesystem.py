@@ -1,7 +1,6 @@
 # coding = utf-8
 # using namespace std
 import sqlite3
-from typing import Type
 
 
 class SystemDatabase:
@@ -167,16 +166,23 @@ class SystemDatabase:
         else:
             return True
 
-    
     @classmethod
     def game_reference_exists(cls, reference):
         cls.cursor.execute("SELECT Name FROM Games WHERE ID = ?;", [reference])
-        return len(cls.cursor.fetchall()[0])
+        if len(cls.cursor.fetchall()[0]) <= 0:
+            return False
+        return True
     
     class GameRefernceNotExists(Exception):
         args = "This game reference does not exists!"
-    
 
+    @staticmethod
+    def count_str_value(var: str, val: str):
+        tot = 0
+        for i in var:
+            if i == val:
+                tot += 1
+        return tot
 
 
 class AnimatronicsData(SystemDatabase):
@@ -324,6 +330,7 @@ class Games(SystemDatabase):
             self.cursor.execute("UPDATE FROM Games SET {} = {} WHERE ID = {};".format(camp, new_value, id))
         except Exception as error:
             return [error.args, error]
+        self.con.commit()
         return ["Done!"]
 
 
@@ -365,7 +372,6 @@ class Others(SystemDatabase):
     class OtherNotFound(Exception):
         args = "This reference does not exists"
 
-
     def __add_info__(self, data: list):
         """
 
@@ -376,8 +382,78 @@ class Others(SystemDatabase):
             return [self.OtherExists.args, self.OtherExists]
         if not self.game_reference_exists(data[2]):
             return [self.GameRefernceNotExists.args, self.GameRefernceNotExists]
-        # todo: Terminar o sistema, para others
-        pass
+        # checking references on the games
+        if data[1] is str and self.count_str_value(data[1], "/") >= len("\b".split(data[1])):
+            n = "/".split(data[1])
+            for i in n:
+                if not self.game_reference_exists(i):
+                    return [self.GameRefernceNotExists.args, self.GameRefernceNotExists]
+        elif data[1] is any([list, tuple, iter]):
+            for i in data[1]:
+                if not self.game_reference_exists(i):
+                    return [self.GameRefernceNotExists.args, self.GameRefernceNotExists]
+        else:
+            return [TypeError.args, TypeError]
+        if not self.other_page_exists(data[2]):
+            return ["The file '"+"' not exists", FileNotFoundError]
+        if not self.other_media_exists(data[3]):
+            return ["The media file does not exists", FileNotFoundError]
+        self.cursor.execute("INSERT INTO Others (Name, GamesAppear, Page, Media) VALUES (?,?,?,?);", data)
+        self.con.commit()
+        return ["Done!"]
+
+    def __delete_info__(self, id: int):
+        if not self.other_id_exists(id):
+            return [self.OtherNotFound.args, self.OtherNotFound]
+        self.cursor.execute("DELETE FROM Others WHERE ID = ?;", [id])
+        self.con.commit()
+        return ["Done!"]
+
+    def __alt_info__(self, id: int, new: str, camp: str):
+        if not self.other_id_exists(id):
+            return [self.OtherNotFound.args, self.OtherNotFound]
+        if camp not in ("Name", "GamesAppear", "Page", "Media"):
+            return ["Was not possible find this camp", Exception]
+        self.cursor.execute("UPDATE FROM Others SET {} = {} WHERE ID = {};".format(camp, new, id))
+        self.con.commit()
+        return ["Done!"]
+
+
+class OthersQuery(Others):
+
+    def __select_all_data__(self, camp, param, value):
+        if camp not in ("Name", "GamesApper", "Page", "Media") or param not in ("Name", "GamesAppear", "Page",
+                                                                                "Media") and param is not None:
+            return ["This camp is not existent", Exception]
+        if camp == "*" or camp is not None:
+            if param or value is None:
+                self.cursor.execute("SELECT * FROM Others;")
+                return self.cursor.fetchall()[0]
+            else:
+                self.cursor.execute("SELECT * FROM Others WHERE {} = {};".format(param, value))
+                return self.cursor.fetchall()[0]
+        elif param is None or value is None:
+            if camp == "*" or camp is None:
+                self.cursor.execute("SELECT * FROM Others;")
+                return self.cursor.fetchall()[0]
+            else:
+                self.cursor.execute("SELECT {} FROM Others;".format(camp))
+                return self.cursor.fetchall()[0]
+        else:
+            self.cursor.execute("SELECT {} FROM Others WHERE {} = {};".format(camp, param, value))
+            return self.cursor.fetchall()[0]
+
+
+__author__ = "Giulliano Scatalon da Silva Rossi"
+__git_hub__ = "GiullianoRossi1987"
+__repository__ = "fnaf-ssystem-repo"
+
+
+
+
+
+
+
 
 
 
